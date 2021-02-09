@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.concurrent.Future;
 
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.junit.Test;
 
 import rx.Observable;
@@ -36,7 +37,9 @@ public class CommandHelloWorld extends HystrixCommand<String> {
     private final String name;
 
     public CommandHelloWorld(String name) {
-        super(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"));
+        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
+                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                        .withExecutionTimeoutInMilliseconds(10000)));
         this.name = name;
     }
 
@@ -130,6 +133,49 @@ public class CommandHelloWorld extends HystrixCommand<String> {
             // More information about Observable can be found at https://github.com/Netflix/RxJava/wiki/How-To-Use
 
         }
+        @Test
+        public void testObservable2() throws Exception {
+            Observable<String> fWorld = new CommandHelloWorld("World").observe();
+
+            try {
+                Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Test
+        public void testToObservable() {
+            Observable<String> fWorld = new CommandHelloWorld("World").toObservable();
+
+            fWorld.subscribe(new Observer<String>() {
+
+                @Override
+                public void onCompleted() {
+                    // nothing needed here
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onNext(String v) {
+                    System.out.println("onNext: " + v);
+                }
+
+            });
+
+            // tips ：此处 sleep 的意图，订阅是异步执行处理结果，避免没执行就结束了。
+            try {
+                Thread.sleep(Long.MAX_VALUE);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
 
 }

@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 
 import java.util.concurrent.Future;
 
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.junit.Test;
 
 import com.netflix.hystrix.HystrixCommand;
@@ -32,7 +33,9 @@ public class CommandHelloFailure extends HystrixCommand<String> {
     private final String name;
 
     public CommandHelloFailure(String name) {
-        super(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"));
+        super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("ExampleGroup"))
+                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                        .withExecutionTimeoutInMilliseconds(10000)));
         this.name = name;
     }
 
