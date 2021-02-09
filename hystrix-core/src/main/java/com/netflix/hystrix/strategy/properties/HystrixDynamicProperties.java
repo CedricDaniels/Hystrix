@@ -18,6 +18,20 @@ package com.netflix.hystrix.strategy.properties;
 import java.util.ServiceLoader;
 
 /**
+ * Hystrix默认提供4个级别的参数配置方式：
+ *
+ * 全局默认值(Default Value)；Hystrix自身代码默认值，使用方不配置任何参数情况下生效。
+ * 可配置全局默认参数(Default Property)；此类配置参数可变更全局默认值。
+ * 实例初始值(@Annotation or com.netflix.hystrix.HystrixCommand.Setter.*** or com.netflix.hystrix.HystrixCommandProperties.Setter.***)；熔断器实例初始值，配置此类参数后，不再使用默认值。
+ * 可配置实例参数(Instance Property)；可动态调整一个熔断器实例的参数值。
+ * 优先级说明：
+ *
+ * 可配置实例参数(Instance Property) > 实例初始值(@Annotation or com.netflix.hystrix.HystrixCommand.Setter.*** or com.netflix.hystrix.HystrixCommandProperties.Setter.***) > 可配置全局默认参数(Default Property) > 全局默认值(Default Value)；
+ *
+ * DEBUG:在此类打上断点，调试 {@link com.netflix.hystrix.examples.basic.CommandHelloWorld}
+ *
+ *
+ * 可以通过此SPI实现自己的动态配置
  * A hystrix plugin (SPI) for resolving dynamic configuration properties. This
  * SPI allows for varying configuration sources.
  * 

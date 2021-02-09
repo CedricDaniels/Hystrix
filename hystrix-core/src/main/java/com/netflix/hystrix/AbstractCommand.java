@@ -161,6 +161,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
         this.commandGroup = initGroupKey(group);
         this.commandKey = initCommandKey(key, getClass());
+        //这里会触发动态配置加载
         this.properties = initCommandProperties(this.commandKey, propertiesStrategy, commandPropertiesDefaults);
         this.threadPoolKey = initThreadPoolKey(threadPoolKey, this.commandGroup, this.properties.executionIsolationThreadPoolKeyOverride().get());
         this.metrics = initMetrics(metrics, this.commandGroup, this.threadPoolKey, this.commandKey, this.properties);
